@@ -35,6 +35,7 @@ namespace HSM.Core.Base
 
         }
 
+#if HSM_UNITY
         public virtual void FixedUpdate()
         {
 
@@ -44,6 +45,7 @@ namespace HSM.Core.Base
         {
 
         }
+#endif
 
         public virtual void Exit()
         {
