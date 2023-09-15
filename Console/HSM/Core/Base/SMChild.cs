@@ -8,7 +8,7 @@
     // to track their parent (if any)
     public abstract class SMChild<TStateID>
     {
-        public IStateMachine<TStateID> parentStateMachine;
+        public IStateMachine<TStateID>? parentStateMachine;
 
         // Used to query if the state, state machine or
         // transition has a state machine parent
