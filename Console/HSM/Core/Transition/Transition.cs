@@ -1,0 +1,81 @@
+namespace HSM.Core.Transition
+{
+    using System;
+    using System.Collections.Generic;
+
+    using HSM.Core.Base;
+
+    using static HSM.Utils.ListUtils;
+    using static HSM.Utils.DebugUtils;
+
+    // All custom transitions should inherit from this
+    // class instead of `TransitionBase`
+    public abstract class Transition<TStateID> :
+        TransitionBase<TStateID>
+    {
+        private List<Func<bool>> _conditions = new();
+
+        private Action? _callback;
+
+        public override void SetCallback(Action callback)
+        {
+            _callback = callback;
+        }
+
+        // Should not be called outside of `StateMachine`
+        public override void TriggerCallback()
+        {
+            _callback?.Invoke();
+        }
+
+        public override bool Conditions()
+        {
+            bool? result = _conditions.AllTrue();
+            Assert(result != null, "`result` is null");
+
+            return (bool)result!;
+        }
+
+        protected Transition(TStateID fromStateID, TStateID toStateID,
+            bool allowDefault = false, params Func<bool>[] initConditions) :
+            base(fromStateID, toStateID, allowDefault)
+        {
+            _conditions.AddRange(initConditions);
+        }
+
+        protected Transition(TStateID fromStateID, TStateID toStateID,
+            Action callback, bool allowDefault = false,
+            params Func<bool>[] initConditions) :
+            this(fromStateID, toStateID, allowDefault, initConditions)
+        {
+            SetCallback(callback);
+        }
+
+        protected void AddCondition(Func<bool> condition)
+        {
+            _conditions.Add(condition);
+        }
+    }
+
+    // A helper abstract class `Transition` with the generic
+    // argument defaulted to a common type
+    public abstract class Transition :
+        Transition<string>
+    {
+        protected Transition(string fromStateID, string toStateID,
+            bool allowDefault = false, params Func<bool>[] initConditions) :
+            base(fromStateID, toStateID, allowDefault, initConditions)
+        {
+
+        }
+
+        protected Transition(string fromStateID, string toStateID,
+            Action callback, bool allowDefault = false,
+            params Func<bool>[] initConditions) :
+            base(fromStateID, toStateID, callback, allowDefault,
+            initConditions)
+        {
+
+        }
+    }
+}
