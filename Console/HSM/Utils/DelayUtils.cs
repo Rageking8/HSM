@@ -5,7 +5,7 @@
 
     public static class DelayUtils
     {
-        public static async Task Execute(Action action,
+        public static async Task DelayExecute(Action action,
             float delay)
         {
             await Task.Delay((int)(delay * 1000f));
