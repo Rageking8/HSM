@@ -1,9 +1,12 @@
-﻿namespace HSM;
-
-class Program
+﻿#if HSM_CONSOLE_MAIN
+namespace HSM
 {
-    private static void Main()
+    class Program
     {
+        private static void Main()
+        {
 
+        }
     }
 }
+#endif
