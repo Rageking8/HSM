@@ -3,7 +3,7 @@
     using System;
     using System.Threading.Tasks;
 
-    public static class Delay
+    public static class DelayUtils
     {
         public static async Task Execute(Action action,
             float delay)
