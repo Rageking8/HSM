@@ -1,4 +1,4 @@
-namespace HSM.Utils
+namespace HSM.Utils.Helpers
 {
 #if HSM_CONSOLE
     using System;

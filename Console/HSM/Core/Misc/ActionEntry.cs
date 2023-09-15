@@ -4,7 +4,7 @@ namespace HSM.Core.Misc
 
     using HSM.Core.Base;
 
-    using static HSM.Utils.DebugUtils;
+    using static HSM.Utils.Helpers.DebugUtils;
 
     // Contains all information needed to add a particular
     // action to a single or multiple corresponding

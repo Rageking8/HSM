@@ -5,7 +5,7 @@ namespace HSM.Core.CustomMetaTransitions
     using HSM.Core.Transition;
     using HSM.Core.Interfaces;
 
-    using static HSM.Utils.DebugUtils;
+    using static HSM.Utils.Helpers.DebugUtils;
 
     // A meta transition that allows the state machine to
     // transit from any state except the target to the target

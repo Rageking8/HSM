@@ -5,8 +5,8 @@ namespace HSM.Core.CustomTransitions
     using HSM.Core.Transition;
     using HSM.Core.Interfaces;
 
-    using static HSM.Utils.DebugUtils;
-    using static HSM.Utils.DelayUtils;
+    using static HSM.Utils.Helpers.DebugUtils;
+    using static HSM.Utils.Helpers.DelayUtils;
 
     // Transition that will happen after a random amount of
     // seconds where the range will be new each time between

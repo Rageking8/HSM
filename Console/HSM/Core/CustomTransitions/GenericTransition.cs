@@ -4,7 +4,7 @@ namespace HSM.Core.CustomTransitions
 
     using HSM.Core.Transition;
 
-    using static HSM.Utils.DebugUtils;
+    using static HSM.Utils.Helpers.DebugUtils;
 
     // A generic transition that does not warrant an
     // additional custom transition which allows adding

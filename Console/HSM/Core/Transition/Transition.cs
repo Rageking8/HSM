@@ -5,8 +5,8 @@ namespace HSM.Core.Transition
 
     using HSM.Core.Base;
 
-    using static HSM.Utils.ListUtils;
-    using static HSM.Utils.DebugUtils;
+    using static HSM.Utils.Helpers.ListUtils;
+    using static HSM.Utils.Helpers.DebugUtils;
 
     // All custom transitions should inherit from this
     // class instead of `TransitionBase`

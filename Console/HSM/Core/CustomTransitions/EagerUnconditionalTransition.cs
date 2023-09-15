@@ -5,7 +5,7 @@ namespace HSM.Core.CustomTransitions
 
     using HSM.Core.Interfaces;
 
-    using static HSM.Utils.ListUtils;
+    using static HSM.Utils.Helpers.ListUtils;
 
     // Use of eager transitions need to be done in caution, as
     // careless usage can lead to infinite loops where 2 or more

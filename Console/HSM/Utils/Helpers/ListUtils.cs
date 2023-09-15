@@ -1,4 +1,4 @@
-﻿namespace HSM.Utils
+﻿namespace HSM.Utils.Helpers
 {
     using System;
     using System.Collections.Generic;

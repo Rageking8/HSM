@@ -2,7 +2,7 @@ namespace HSM.Core.Base
 {
     using HSM.Core.Interfaces;
 
-    using static HSM.Utils.DebugUtils;
+    using static HSM.Utils.Helpers.DebugUtils;
 
     // Base abstract class shared between
     // an actual `State` and a `StateMachine`

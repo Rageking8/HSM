@@ -2,7 +2,7 @@
 {
     using System;
 
-    using static HSM.Utils.DebugUtils;
+    using static HSM.Utils.Helpers.DebugUtils;
 
     public abstract class TransitionBase<TStateID> :
         SMChild<TStateID>

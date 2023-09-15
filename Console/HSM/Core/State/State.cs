@@ -7,7 +7,7 @@ namespace HSM.Core.State
     using HSM.Core.Base;
     using HSM.Core.Misc;
 
-    using static HSM.Utils.DebugUtils;
+    using static HSM.Utils.Helpers.DebugUtils;
 
     // A `SortedList` containing all actions of a particular
     // `StateMessageMethod` ordered by their priorities
