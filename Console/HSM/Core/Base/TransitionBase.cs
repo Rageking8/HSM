@@ -23,7 +23,7 @@
 
         }
 
-        protected TransitionBase(TStateID fromStateID, TStateID toStateID,
+        protected TransitionBase(TStateID? fromStateID, TStateID? toStateID,
             bool allowDefault = false)
         {
             if (!allowDefault)

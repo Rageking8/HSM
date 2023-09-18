@@ -8,7 +8,7 @@
     public interface IStateMachine<TStateID>
     {
         // Get the current state this state machine is in
-        StateBase<TStateID> CurrentState { get; }
+        StateBase<TStateID>? CurrentState { get; }
     }
 
     // A helper interface `IStateMachine` with the generic

@@ -36,14 +36,14 @@ namespace HSM.Core.Transition
             return (bool)result!;
         }
 
-        protected Transition(TStateID fromStateID, TStateID toStateID,
+        protected Transition(TStateID? fromStateID, TStateID? toStateID,
             bool allowDefault = false, params Func<bool>[] initConditions) :
             base(fromStateID, toStateID, allowDefault)
         {
             _conditions.AddRange(initConditions);
         }
 
-        protected Transition(TStateID fromStateID, TStateID toStateID,
+        protected Transition(TStateID? fromStateID, TStateID? toStateID,
             Action callback, bool allowDefault = false,
             params Func<bool>[] initConditions) :
             this(fromStateID, toStateID, allowDefault, initConditions)

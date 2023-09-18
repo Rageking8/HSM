@@ -7,25 +7,25 @@ namespace HSM.Utils.Types
     [Serializable]
     public class Pair<K, V>
     {
-        public K First { get; set; }
+        public K? First { get; set; }
 
-        public V Second { get; set; }
+        public V? Second { get; set; }
 
         // Allow access via `Key`
-        public K Key
+        public K? Key
         {
             get => First;
             set => First = value;
         }
 
         // Allow access via `Value`
-        public V Value
+        public V? Value
         {
             get => Second;
             set => Second = value;
         }
 
-        public Pair(K first = default, V second = default)
+        public Pair(K? first = default, V? second = default)
         {
             First = first;
             Second = second;

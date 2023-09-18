@@ -16,6 +16,7 @@ namespace HSM.Core.StateMachine
     // `TStateID` is used as a type for all states in this `StateMachine`
     public class StateMachine<TSelfID, TStateID> :
         StateBase<TSelfID>, IStateMachine<TStateID>
+        where TStateID : notnull
     {
         public enum TransitionProtocol
         {
@@ -27,11 +28,11 @@ namespace HSM.Core.StateMachine
         }
 
         public TransitionProtocol CurrentTransitionProtocol
-        { get; private set; } = TransitionProtocol.HandleAfter;
+            { get; private set; } = TransitionProtocol.HandleAfter;
 
         // Store the current state this `StateMachine` is in
         // right now
-        public StateBase<TStateID> CurrentState { get; private set; }
+        public StateBase<TStateID>? CurrentState { get; private set; }
 
         // This state machine is the root state machine if and
         // only if it does not have a parent
@@ -39,7 +40,8 @@ namespace HSM.Core.StateMachine
 
         // Dictionary with all states in this state machine (this can
         // contain state machines if it is a HSM)
-        private Dictionary<TStateID, StateBase<TStateID>> _allStates = new();
+        private Dictionary<TStateID, StateBase<TStateID>> _allStates =
+            new();
 
         // Dictionary with all transitions in this state machine
         private Dictionary<TStateID, List<TransitionBase<TStateID>>>
@@ -52,10 +54,10 @@ namespace HSM.Core.StateMachine
         // set to false, such that this stores all those `stateID`s where
         // the meta transition applies
         private Dictionary<AllToOneTransition<TStateID>, List<TStateID>>
-            _allAllToOneTransitionData;
+            _allAllToOneTransitionData = new();
 
         // Stores the state this state macine is in at the start
-        private TStateID _startStateID;
+        private TStateID? _startStateID;
 
         // Max number of exceptions thrown when current state is null,
         // to prevent flooding the editor when message method calls
@@ -114,32 +116,33 @@ namespace HSM.Core.StateMachine
         {
             InternalCheckSeal();
 
-            TStateID fromID = newTransition.FromStateID;
-            TStateID toID = newTransition.ToStateID;
+            TStateID? fromID = newTransition.FromStateID;
+            TStateID? toID = newTransition.ToStateID;
 
             // Check that both the from and to state IDs are valid
             VerifyID(fromID, toID);
 
-            bool keyExists = _allTransitions.TryGetValue(fromID, out var list);
+            bool keyExists = _allTransitions.TryGetValue(fromID!,
+                out var list);
 
             // `fromID` key already exists in the dictionary and `list`
             // is not null
             if (keyExists && list != null)
             {
-                _allTransitions[fromID].Add(newTransition);
+                _allTransitions[fromID!].Add(newTransition);
             }
             // `fromID` key already exists in the dictionary and `list`
             // is null
             else if (keyExists && list == null)
             {
-                _allTransitions[fromID] = new List<TransitionBase<TStateID>>
+                _allTransitions[fromID!] = new List<TransitionBase<TStateID>>
                 { newTransition };
             }
             // `fromID` key does not yet exist, add the key entry to the
             // dictionary together with `newTransition`
             else
             {
-                _allTransitions.Add(fromID, new List<TransitionBase<TStateID>>
+                _allTransitions.Add(fromID!, new List<TransitionBase<TStateID>>
                 { newTransition });
             }
         }
@@ -190,7 +193,7 @@ namespace HSM.Core.StateMachine
                 "`_startStateID` is null");
 
             // Set current state to the default start state
-            CurrentState = _allStates[_startStateID];
+            CurrentState = _allStates[_startStateID!];
 
             HandleTimedTransitions(CurrentState.StateID);
         }
@@ -264,16 +267,19 @@ namespace HSM.Core.StateMachine
                 "no further mutation are allowed");
         }
 
-        private void SwitchState(TStateID toStateID,
-            Action eagerCallback = null)
+        private void SwitchState(TStateID? toStateID,
+            Action? eagerCallback = null)
         {
+            Assert(toStateID != null,
+                "`toStateID` should never be `null`");
+
             CurrentState?.Exit();
 
-            CurrentState = VerifyGetState(toStateID);
+            CurrentState = VerifyGetState(toStateID!);
 
             CurrentState?.Enter();
 
-            HandleTimedTransitions(CurrentState.StateID);
+            HandleTimedTransitions(CurrentState!.StateID);
 
             // Execute the eager callback
             eagerCallback?.Invoke();
@@ -288,7 +294,7 @@ namespace HSM.Core.StateMachine
             if (metaResult.First.IsDefault())
             {
                 Pair<TStateID, bool> normalResult =
-                    TryAllTransitions(CurrentState.StateID);
+                    TryAllTransitions(CurrentState!.StateID);
 
                 // If `normalResult` is default, nothing
                 // more needs to be done, return
@@ -339,7 +345,7 @@ namespace HSM.Core.StateMachine
                 {
                     // `AllToOneTransition` does not transit to itself
                     if (EqualityComparer<TStateID>.Default.Equals(
-                        CurrentState.StateID, allToOneTransition.ToStateID))
+                        CurrentState!.StateID, allToOneTransition.ToStateID))
                     {
                         continue;
                     }
@@ -364,7 +370,7 @@ namespace HSM.Core.StateMachine
 
                         return new(allToOneTransition.ToStateID,
                             allToOneTransition is IEagerTransition &&
-                            (allToOneTransition as IEagerTransition).
+                            (allToOneTransition as IEagerTransition)!.
                             IsEager());
                     }
                 }
@@ -377,8 +383,8 @@ namespace HSM.Core.StateMachine
             return new(default, false);
         }
 
-        private void HandleTransitionCallback(TransitionBase<TStateID>
-            transition)
+        private static void HandleTransitionCallback(
+            TransitionBase<TStateID> transition)
         {
             transition.TriggerCallback();
         }
@@ -391,13 +397,15 @@ namespace HSM.Core.StateMachine
                 if (transition is AllToOneTransition<TStateID>)
                 {
                     Log("State Machine \"" + StateID + "\" | " +
-                        CurrentState.StateID + " > " + transition.ToStateID);
+                        CurrentState!.StateID + " > " +
+                        transition.ToStateID);
 
                     return;
                 }
 
                 Log("State Machine \"" + StateID + "\" | " +
-                    transition.FromStateID + " > " + transition.ToStateID);
+                    transition.FromStateID + " > " +
+                    transition.ToStateID);
             }
         }
 
@@ -430,7 +438,7 @@ namespace HSM.Core.StateMachine
 
                     return new(transition.ToStateID,
                         transition is IEagerTransition &&
-                        (transition as IEagerTransition).IsEager());
+                        (transition as IEagerTransition)!.IsEager());
                 }
             }
 
@@ -460,7 +468,7 @@ namespace HSM.Core.StateMachine
         }
 
         // New state ID validation
-        private void VerifyNewStateID(TStateID newStateID)
+        private static void VerifyNewStateID(TStateID? newStateID)
         {
             Assert(newStateID != null && !newStateID.IsDefault(),
                 "`newStateID` must not be null and cannot " +
@@ -469,12 +477,14 @@ namespace HSM.Core.StateMachine
 
         // Assert that every `stateID` exists in the
         // `allStates` dictionary
-        private void VerifyID(params TStateID[] stateIDs)
+        private void VerifyID(params TStateID?[] stateIDs)
         {
-            foreach (TStateID stateID in stateIDs)
+            foreach (TStateID? stateID in stateIDs)
             {
-                Assert(_allStates.ContainsKey(stateID),
-                    "`stateID` does not exist");
+                Assert(stateID != null &&
+                    _allStates.ContainsKey(stateID),
+                    "`stateID` should not be null or " +
+                    "it does not exist");
             }
         }
 
@@ -485,7 +495,7 @@ namespace HSM.Core.StateMachine
             bool result = _allStates.TryGetValue(stateID, out var state);
             Assert(result, "`stateID` does not exist");
 
-            return state;
+            return state!;
         }
 
         // Help reduce duplication of `CurrentTransitionProtocol`
