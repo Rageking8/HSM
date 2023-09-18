@@ -13,7 +13,7 @@
         Update,
 
         Exit,
-#elif HSM_UNTIY          
+#elif HSM_UNITY          
         Enter,
 
         // Update message methods
